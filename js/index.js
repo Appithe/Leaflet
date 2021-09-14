@@ -1,52 +1,72 @@
 var lat = document.getElementById('lat');
-        var lng = document.getElementById('lng');
-        var btnCoords = document.getElementById('btnSubirCoords');
+var lng = document.getElementById('lng');
+var nombreLugar = document.getElementById('nombre')
+var btnCoords = document.getElementById('btnSubirCoords');
 
-        var mymap = L.map("mapid").setView(
-            [21.15223412617155, -101.7113883047542],
-            15
-        );
+var mymap = L.map("mapid").setView(
+    [21.01581464273601, -101.25292611589512],
+    15
+);
 
-        L.tileLayer(
-            "https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}{r}.{ext}", {
-                attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-                subdomains: "abcd",
-                minZoom: 0,
-                maxZoom: 20,
-                ext: "png",
-            }
-        ).addTo(mymap);
+var lugares = [
+    {
+        "nombre": "Plaza Galereña",
+        "lat": 20.987905245349697, 
+        "lng": -101.28424742853517
+    },
+    {
+        "nombre": "Centro de guanajuato",
+        "lat": 21.01581464273601,
+        "lng": -101.25292611589512
+    },
+    {
+        "nombre": "Alaia guanajuato",
+        "lat": 20.97443943694084,
+        "lng": -101.279534597727
+    },
 
-        var salle = L.marker([21.15223412617155, -101.7113883047542]).addTo(
-            mymap
-        );
+]
 
-        var FIT = L.marker([28.067169188445153, -80.62348334271738]).addTo(mymap);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}
+).addTo(mymap);
 
-        var ECIJG = L.marker([4.782822211312334, -74.0414846752721]).addTo(mymap);
+// Cargar marcadores
+cargarMarcadores = () => {
+    lugares.forEach(lugar => {
+        L.marker([lugar.lat, lugar.lng]).addTo(mymap).bindPopup(lugar.nombre);
+    });
+}
 
-        // Poligono
-        L.polygon([
-                [21.15223412617155, -101.7113883047542],
-                [28.067169188445153, -80.62348334271738],
-                [4.782822211312334, -74.0414846752721],
-            ])
-            .addTo(mymap)
-            .bindPopup("Zona peligrosa");
+window.onload = cargarMarcadores();
 
-        // Figura sobre marcadores
-        var circulo = L.circle([21.15223412617155, -101.7113883047542], {
-                color: "red",
-                fillColor: "#f03",
-                fillOpacity: 0.5,
-                radius: 1000,
-            })
-            .addTo(mymap)
-            .bindPopup("Universidad de la Salle");
+// Crear marcador nuevo
+btnCoords.addEventListener('click', () => {
+    lugar = {
+        nombre: nombreLugar.value,
+        lat: lat.value,
+        lng: lng.value
+    }
+    nombreLugar.value = "";
+    lat.value = "";
+    lng.value = "";
+    lugares.push(lugar);
+    cargarMarcadores();
+});
 
-        // Crear marcadores
-        btnCoords.addEventListener('click', () => {
-            var marcadorNuevo = L.marker([parseInt(lat.value), parseInt(lng.value)]).addTo(mymap);
-            lat.value = "";
-            lng.value = "";
-        });
+// Poligono
+L.polygon(lugares)
+    .addTo(mymap)
+    .bindPopup("Zona peligrosa");
+
+// Figura sobre marcadores
+var circulo = L.circle([21.01581464273601, -101.25292611589512], {
+    color: "red",
+    fillColor: "#f03",
+    fillOpacity: 0.5,
+    radius: 250,
+})
+    .addTo(mymap)
+    .bindPopup("Centro de guanajuato");
